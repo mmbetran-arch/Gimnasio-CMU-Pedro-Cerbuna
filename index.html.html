@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GIMNASIO CMU PEDRO CERBUNA</title>
+    <style>
+        :root {
+            --bg-color: #0b1a30;
+            --card-bg: #162a45;
+            --accent-color: #3b82f6;
+            --accent-hover: #2563eb;
+            --text-color: #ffffff;
+            --text-secondary: #cbd5e1;
+            --border-color: #1e3a60;
+            --highlight: #fbbf24;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding-bottom: 40px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .screen {
+            display: none !important;
+        }
+
+        .screen.active {
+            display: block !important;
+        }
+
+        #home-screen {
+            text-align: center;
+            padding-top: 15vh;
+        }
+
+        h1.title {
+            font-size: 2.2rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 12px;
+            color: #ffffff;
+        }
+
+        .subtitle {
+            color: #93c5fd;
+            font-size: 1.1rem;
+            margin-bottom: 35px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-start {
+            background-color: var(--accent-color);
+            color: #ffffff;
+            border: 2px solid #60a5fa;
+            padding: 18px 50px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+        }
+
+        .btn-start:hover {
+            background-color: var(--accent-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.6);
+        }
+
+        /* ESTRUCTURA SIMÉTRICA DEL MENÚ */
+        .workout-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .grid-row-top {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .grid-row-bottom {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        @media (max-width: 650px) {
+            .grid-row-top,
+            .grid-row-bottom {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .workout-card {
+            background-color: var(--card-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 14px;
+            padding: 35px 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .workout-card:hover {
+            border-color: #60a5fa;
+            transform: translateY(-3px);
+            background-color: #1c3558;
+        }
+
+        .workout-card h2 {
+            font-size: 1.3rem;
+            color: #ffffff;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .workout-card.abs-card {
+            border-color: var(--highlight);
+            background: linear-gradient(135deg, #162a45 0%, #1e3a60 100%);
+        }
+
+        .btn-back {
+            background-color: #162a45;
+            color: #ffffff;
+            border: 1px solid #3b82f6;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .btn-back:hover {
+            background-color: #1e3a60;
+        }
+
+        .section-title {
+            color: #93c5fd;
+            font-size: 1.3rem;
+            margin: 30px 0 15px 0;
+            border-bottom: 2px solid #3b82f6;
+            padding-bottom: 5px;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        .exercise-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
+        }
+
+        .exercise-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .exercise-name {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .btn-clarification {
+            background-color: #0b1a30;
+            color: var(--highlight);
+            border: 1px solid var(--highlight);
+            padding: 7px 14px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s ease;
+        }
+
+        .btn-clarification:hover {
+            background-color: var(--highlight);
+            color: #0b1a30;
+        }
+
+        .exercise-desc {
+            color: var(--text-secondary);
+            font-size: 1.05rem;
+            line-height: 1.6;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.85);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background-color: var(--card-bg);
+            padding: 25px;
+            border-radius: 12px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 85vh;
+            overflow-y: auto;
+            border: 2px solid #3b82f6;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .info-group {
+            margin-bottom: 15px;
+            background-color: #0b1a30;
+            padding: 12px 15px;
+            border-radius: 8px;
+            border-left: 4px solid #3b82f6;
+        }
+
+        .info-group.highlight-group {
+            border-left-color: var(--highlight);
+        }
+
+        .info-title {
+            font-weight: bold;
+            color: #60a5fa;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .info-text {
+            color: #cbd5e1;
+            font-size: 0.95rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- 1. PANTALLA INICIAL -->
+    <div id="home-screen" class="screen active">
+        <h1 class="title">GIMNASIO CMU PEDRO CERBUNA</h1>
+        <p class="subtitle">Guía de Entrenamiento & Rutinas Colectivas</p>
+        <button class="btn-start" id="start-btn">ENTRAR</button>
+    </div>
+
+    <!-- 2. MENÚ PRINCIPAL -->
+    <div id="menu-screen" class="screen">
+        <h1 class="title" style="font-size: 1.8rem; text-align: center;">SELECCIONA TU RUTINA</h1>
+        <div class="workout-grid">
+            <!-- Fila Superior -->
+            <div class="grid-row-top">
+                <div class="workout-card" data-workout="tracciones">
+                    <h2>TRACCIONES</h2>
+                </div>
+                <div class="workout-card" data-workout="empujes">
+                    <h2>EMPUJES</h2>
+                </div>
+                <div class="workout-card" data-workout="brazo">
+                    <h2>BRAZO</h2>
+                </div>
+            </div>
+
+            <!-- Fila Inferior -->
+            <div class="grid-row-bottom">
+                <div class="workout-card abs-card" data-workout="abdominales">
+                    <h2>CIRCUITO DE ABDOMINALES</h2>
+                </div>
+                <div class="workout-card" data-workout="pierna">
+                    <h2>PIERNA</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. DETALLE DE RUTINA -->
+    <div id="workout-screen" class="screen">
+        <button class="btn-back" id="back-btn">← Volver al Menú</button>
+        <h1 id="workout-title" class="title" style="text-align: left;"></h1>
+
+        <div id="warmup-section">
+            <div class="section-title">1. Calentamiento Dinámico</div>
+            <div id="warmup-container"></div>
+        </div>
+
+        <div class="section-title" id="main-section-title">2. Rutina Principal</div>
+        <div id="exercises-container"></div>
+
+        <div id="cooldown-section">
+            <div class="section-title">3. Estiramientos Finales</div>
+            <div id="cooldown-container"></div>
+        </div>
+    </div>
+
+</div>
+
+<!-- MODAL ACLARACIONES -->
+<div id="clarification-modal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 id="modal-exercise-name" style="color: #93c5fd;">Aclaraciones</h3>
+            <button class="close-modal" id="close-modal-btn">&times;</button>
+        </div>
+        <div id="modal-clarification-body"></div>
+    </div>
+</div>
+
+<script>
+// BASE DE DATOS DE EJERCICIOS
+const exerciseLibrary = {
+    curlBiceps: {
+        name: "Curl de Bíceps con Mancuerna",
+        desc: "Mantén los codos fijos a los lados del torso y flexiona sin balancear la espalda.",
+        muscles: "Bíceps Braquial, Braquial Anterior, Supinador Largo.",
+        substitutes: "Curl de bíceps con barra Z, Curl en polea baja con barra recta.",
+        outsideBenefits: "Aumenta la fuerza de agarre y tracción funcional en actividades cotidianas.",
+        tips: "Gira la muñeca hacia afuera (supinación) al subir para lograr la máxima contracción del bíceps."
+    },
+    curlDetrasEspalda: {
+        name: "Curl de Bíceps detrás de la Espalda con Mancuerna",
+        desc: "Sentado o inclinado, deja caer los brazos por detrás de la línea del cuerpo para estirar al máximo la cabeza larga del bíceps antes de flexionar.",
+        muscles: "Bíceps Braquial (Cabeza Larga), Braquial Anterior.",
+        substitutes: "Curl bayesian.",
+        outsideBenefits: "Fortalece los brazos en posiciones de máxima extensión, reduciendo el riesgo de tirones en agarres traseros.",
+        tips: "Mantén los hombros retraídos y evita adelantar los codos durante la flexión."
+    },
+    curlPredicador: {
+        name: "Curl Predicador con Mancuerna",
+        desc: "Apoya el tríceps firmemente en el banco predicador. Realiza la flexión aislando completamente el bíceps sin posibilidad de trampear.",
+        muscles: "Bíceps Braquial (Cabeza Corta), Braquial Anterior.",
+        substitutes: "Polea o con barra.",
+        outsideBenefits: "Aumenta la fuerza de control en flexión de codo aislada.",
+        tips: "No extiendas el codo al 100% bruscamente en el punto bajo para proteger la articulación."
+    },
+    tricepsPolea: {
+        name: "Tríceps en Polea",
+        desc: "Empuja hacia abajo extendiendo los codos por completo sin mover los hombros.",
+        muscles: "Tríceps Braquial (Cabeza Lateral y Media).",
+        substitutes: "Extensiones de tríceps tras nuca con mancuerna, Fondos entre bancos.",
+        outsideBenefits: "Mejora la fuerza de empuje para deportes de contacto y estabiliza el codo.",
+        tips: "Bloquea los codos pegados a las costillas y muévelos como si fueran bisagras fijas."
+    },
+    pressKatana: {
+        name: "Press Katana",
+        desc: "En polea alta o con mancuerna por detrás de la cabeza, extiende los brazos diagonalmente hacia arriba como si desenfundaras una espada.",
+        muscles: "Tríceps Braquial (Cabeza Larga).",
+        substitutes: "Extensiones tras nuca con cuerda en polea, Press francés.",
+        outsideBenefits: "Enfatiza la cabeza larga del tríceps, crucial para la estabilidad del hombro en lanzamientos.",
+        tips: "Mantén los codos lo más cerrados posible y controla el estiramiento en la fase negativa."
+    },
+    pressMilitar: {
+        name: "Press Militar con Mancuerna",
+        desc: "Empuja las mancuernas sobre la cabeza sin arquear en exceso la espalda baja.",
+        muscles: "Deltoides Anterior, Tríceps, Serrato Mayor, Trapecio Superior.",
+        substitutes: "Press Militar con barra de pie, Press Arnold, Press sobre la cabeza en polea.",
+        outsideBenefits: "Aumenta la fuerza funcional para levantar objetos pesados por encima de la cabeza en el día a día.",
+        tips: "Aprieta fuertemente los glúteos y el abdomen antes de empujar para proteger la zona lumbar."
+    },
+    elevacionesLaterales: {
+        name: "Elevaciones Laterales",
+        desc: "Eleva las mancuernas ligeramente por delante del cuerpo con codos semi-flexionados.",
+        muscles: "Deltoides Lateral (Hombro medio).",
+        substitutes: "Elevaciones laterales en polea baja, Elevaciones laterales con gomas elásticas.",
+        outsideBenefits: "Proporciona la estética de hombros anchos y mejora el empaque articular de la clavícula.",
+        tips: "Inicia el movimiento con los codos y no subas las mancuernas por encima del nivel de las orejas."
+    },
+    vuelosPosteriores: {
+        name: "Vuelos Posteriores para Hombro",
+        desc: "Con el torso inclinado hacia adelante o apoyado en banco, eleva las mancuernas hacia los lados enfocando la parte posterior del hombro.",
+        muscles: "Deltoides Posterior, Romboides, Trapecio Medio.",
+        substitutes: "Facepulls en polea alta, Vuelos posteriores en máquina aperturas.",
+        outsideBenefits: "Clave para corregir la postura con hombros rotados hacia adelante causada por horas frente a pantallas.",
+        tips: "Junta las escápulas al final del movimiento y evita utilizar el impulso de la espalda baja."
+    }
+};
+
+const workoutsData = {
+    pierna: {
+        title: "Rutina de Pierna",
+        warmup: [
+            { name: "Foam Roller en Cuádriceps y Femoral", desc: "Roda suavemente sobre los cuádriceps y femoral para liberar fascias y preparar el tejido muscular." },
+            { name: "World's Greatest Stretch", desc: "Zancada profunda llevando el codo al tobillo interno y girando el torso para abrir cadera y torácica." },
+            { name: "Rotaciones de Cadera", desc: "En cuadrupedia, realiza círculos amplios con la rodilla hacia adentro y hacia afuera." },
+            { name: "Cossack Squats", desc: "Desplazamiento lateral flexionando una pierna y estirando la otra para movilizar aductores y tobillos." }
+        ],
+        exercises: [
+            {
+                name: "Sentadilla",
+                desc: "Mantén la espalda recta, desciende flexionando rodillas y cadera rompiendo el paralelo si la movilidad lo permite.",
+                muscles: "Cuádriceps, Glúteo Mayor, Aductores, Erector de la Columna.",
+                substitutes: "Sentadilla Goblet con mancuerna, Sentadilla Frontal, Sentadilla Zercher.",
+                outsideBenefits: "Máxima transferencia a saltos verticales, potencia en arrancadas de velocidad y mejora de la densidad ósea.",
+                tips: "Empuja con todo el pie manteniendo los talones pegados al suelo y abre las rodillas en la misma dirección de las puntas."
+            },
+            {
+                name: "Sentadilla Búlgara",
+                desc: "Apoya el empeine en un banco trasero. Baja verticalmente controlando que la rodilla delantera no colapse.",
+                muscles: "Cuádriceps, Glúteo Medio y Mayor, Isquiotibiales.",
+                substitutes: "Zancadas caminando con mancuernas, Step-ups en banco alto, Zancadas estáticas.",
+                outsideBenefits: "Corrige descompensaciones entre piernas, mejora drásticamente el equilibrio postural y la estabilidad al correr o subir escaleras.",
+                tips: "Si inclinas el torso ligeramente hacia adelante enfocarás más el trabajo en el glúteo; si mantienes el torso vertical focalizarás el cuádriceps."
+            },
+            {
+                name: "Copenhaguen Planks",
+                desc: "Plancha lateral apoyando la pierna superior sobre un banco para activar fuertemente los aductores.",
+                muscles: "Aductores (Largo, Corto y Mayor), Core, Oblicuos.",
+                substitutes: "Aductores en máquina de pie, Aducción de cadera con polea o goma elástica.",
+                outsideBenefits: "Prevención fundamental de pubalgias y lesiones de ingle en cambios de ritmo rápidos o giros de fútbol/baloncesto.",
+                tips: "Si te resulta muy difícil, apoya la rodilla en el banco en lugar del tobillo para reducir la palanca."
+            },
+            {
+                name: "Nordic Curls",
+                desc: "Con los pies fijados, frena la caída del torso hacia el suelo usando los isquiotibiales.",
+                muscles: "Isquiotibiales (Semimembranoso, Semitendinoso, Bíceps Femoral), Gemelos.",
+                substitutes: "Peso muerto con barra, Peso Muerto Rumano con mancuernas.",
+                outsideBenefits: "Aumenta la velocidad punta en sprint y reduce hasta en un 50% las roturas fibrilares en la parte trasera del muslo.",
+                tips: "No dobles la cadera: mantén el cuerpo como una tabla recta desde las rodillas hasta la cabeza durante toda la bajada."
+            }
+        ],
+        cooldown: [
+            { 
+                name: "Estiramiento de Cuádriceps", 
+                desc: "Ponte de pie, dobla la rodilla y lleva el talón hacia la zona glútea sujetando el empeine con la mano. Mantén las rodillas juntas, empuja la cadera ligeramente hacia adelante para acentuar el estiramiento en la cara anterior del muslo y mantén el torso recto sin arquear la espalda." 
+            },
+            { 
+                name: "Estiramiento de Isquiotibiales", 
+                desc: "Siéntate en el suelo con una pierna extendida hacia adelante y la otra flexionada tocando el muslo interno. Inclina el torso hacia adelante desde la cadera (sin redondear en exceso la espalda) buscando tocar la punta del pie o la espinilla hasta sentir una tensión suave y constante en la parte posterior del muslo." 
+            },
+            { 
+                name: "Mariposa (Aductores)", 
+                desc: "Siéntate con la espalda recta, junta las plantas de los pies y acerca los talones hacia la pelvis. Sujeta los pies con las manos y presiona suavemente las rodillas hacia el suelo utilizando los codos. Mantén el Pecho erguido para estirar la musculatura interna de los muslos e ingle de forma progresiva." 
+            }
+        ]
+    },
+    brazo: {
+        title: "Rutina de Brazo",
+        warmup: [
+            { name: "Rotadores de Hombro y Codo en Polea", desc: "Realiza rotaciones internas y externas con la polea a la altura del codo para lubricar las articulaciones y calentar el manguito rotador." },
+            { name: "Dislocaciones con Pica/Goma", desc: "Sujeta la pica con agarre ancho y pásala por encima de la cabeza hasta la espalda baja de forma fluida." }
+        ],
+        exercises: [
+            exerciseLibrary.curlBiceps,
+            exerciseLibrary.curlDetrasEspalda,
+            exerciseLibrary.curlPredicador,
+            exerciseLibrary.tricepsPolea,
+            exerciseLibrary.pressKatana,
+            exerciseLibrary.pressMilitar,
+            exerciseLibrary.elevacionesLaterales,
+            exerciseLibrary.vuelosPosteriores
+        ],
+        cooldown: [
+            { name: "Estiramiento de Bíceps en Pared", desc: "Apoya la palma en la pared con el brazo extendido y gira el torso hacia el lado opuesto." },
+            { name: "Estiramiento de Tríceps Overhead", desc: "Lleva el brazo tras la cabeza y empuja suavemente el codo hacia abajo con la otra mano." }
+        ]
+    },
+    empujes: {
+        title: "Rutina de Empujes",
+        warmup: [
+            { name: "Rotadores de Hombro y Codo en Polea", desc: "Ejecuta giros de rotación externa e interna para preparar las cápsulas articulares del hombro ante cargas de empuje." },
+            { name: "Flexiones Escapulares", desc: "En posición de plancha, junta y separa las escápulas sin doblar los codos." },
+            { name: "Círculos de Brazos", desc: "Movimientos circulares amplios hacia adelante y hacia atrás para movilizar la cintura escapular." }
+        ],
+        exercises: [
+            {
+                name: "Press Inclinado en Multipower",
+                desc: "Ajusta el banco a 30-45°. Baja la barra al pecho alto de forma controlada.",
+                muscles: "Pectoral Mayor (Haz Clavicular / Pecho Alto), Deltoides Anterior, Tríceps.",
+                substitutes: "Press Inclinado con mancuernas, Flexiones declinadas con pies elevados.",
+                outsideBenefits: "Aumenta la fuerza de empuje frontal en deportes de lanzamiento o artes marciales.",
+                tips: "Retrae las escápulas (júntalas atrás) antes de iniciar la serie y no dejes que los codos se abran excesivamente hacia afuera."
+            },
+            {
+                name: "Press Plano con Mancuernas",
+                desc: "Desciende las mancuernas a los lados del pecho manteniendo un ángulo seguro.",
+                muscles: "Pectoral Mayor, Deltoides Anterior, Tríceps.",
+                substitutes: "Press de Banca con barra, Flexiones de pecho tradicionales.",
+                outsideBenefits: "Desarrolla libertad de movimiento en los hombros reduciendo rigideces estructurales.",
+                tips: "Baja las mancuernas formando un ángulo de 45° respecto al torso para proteger el manguito rotador."
+            },
+            {
+                name: "Fondos en Paralelas",
+                desc: "Inclina ligeramente el cuerpo hacia adelante para enfatizar el trabajo de pectoral.",
+                muscles: "Pectoral Mayor (Haz Inferior), Tríceps, Deltoides Anterior.",
+                substitutes: "Press Declinado con mancuernas o barra, Flexiones entre dos sillas.",
+                outsideBenefits: "Ejercicio calisténico maestro para el control del propio cuerpo en el espacio.",
+                tips: "No bajes más allá de los 90° de flexión de codo si notas molestia o tirón en la parte delantera del hombro."
+            },
+            exerciseLibrary.pressMilitar,
+            exerciseLibrary.elevacionesLaterales,
+            exerciseLibrary.tricepsPolea,
+            exerciseLibrary.pressKatana
+        ],
+        cooldown: [
+            { name: "Estiramiento de Pectoral en Marco", desc: "Apoya el antebrazo en el marco de una puerta y da un paso al frente girando levemente el torso." },
+            { name: "Estiramiento Deltoides Cruzado", desc: "Cruza el brazo frente al pecho y presiónalo hacia el cuerpo con el otro antebrazo." }
+        ]
+    },
+    tracciones: {
+        title: "Rutina de Tracciones",
+        warmup: [
+            { name: "Rotadores de Hombro y Codo en Polea", desc: "Activa la musculatura estabilizadora del hombro mediante rotaciones controladas en polea." },
+            { name: "Dominadas Escapulares", desc: "Colgado de la barra, eleva y baja el cuerpo únicamente deprimiendo y juntando las escápulas." },
+            { name: "Gato-Camello", desc: "En cuadrupedia, arquea y redondea la columna vertebral coordinando con la respiración." }
+        ],
+        exercises: [
+            {
+                name: "Dominadas",
+                desc: "Tracciona con los dorsales hasta que la barbilla supere la barra.",
+                muscles: "Dorsal Ancho, Redondo Mayor, Bíceps, Trapecio Inferior, Core.",
+                substitutes: "Jalón al Pecho en polea, Dominadas asistidas con goma elástica.",
+                outsideBenefits: "Mejora drásticamente la postura erguida descompensando las horas sentado frente al ordenador.",
+                tips: "Piensa en llevar los codos hacia abajo y hacia las caderas en lugar de tirar solo con los brazos."
+            },
+            {
+                name: "Remo Pendlay",
+                desc: "Espalda paralela al suelo. Tira explosivamente de la barra desde el suelo hasta la parte baja del pecho.",
+                muscles: "Dorsal Ancho, Trapecio, Romboides, Erector Espinal, Core.",
+                substitutes: "Remo con Barra inclinado tradicional, Remo en polea baja con agarre neutro.",
+                outsideBenefits: "Aumenta la explosividad de la cadena posterior, vital para carreras de velocidad, arranques y placajes.",
+                tips: "Apoya la barra completamente en el suelo en cada repetición para eliminar la energía elástica y generar fuerza pura desde cero."
+            },
+            {
+                name: "Remo en Polea Baja",
+                desc: "Tira del agarre hacia el abdomen bajo juntando las escápulas atrás.",
+                muscles: "Dorsal Ancho, Romboides, Trapecio Medio.",
+                substitutes: "Remo unipodal con mancuerna apoyado en banco, Remo en máquina de palancas.",
+                outsideBenefits: "Fortalece la zona media-alta de la espalda previniendo dolores de cuello y hombros cargados.",
+                tips: "Mantén el pecho henchido al final del tirón y no te inclines en exceso hacia atrás con la espalda baja."
+            },
+            exerciseLibrary.curlBiceps,
+            exerciseLibrary.curlPredicador,
+            exerciseLibrary.curlDetrasEspalda
+        ],
+        cooldown: [
+            { name: "Estiramiento de Dorsal Colgado", desc: "Sujétate a una barra alta con ambas manos y deja caer el peso de la cadera suavemente hacia abajo." },
+            { name: "Child's Pose", desc: "Arrodillado en el suelo, sienta los glúteos en los talones y estira los brazos hacia adelante pegando el Pecho al suelo." }
+        ]
+    },
+    abdominales: {
+        title: "Circuito de Abdominales",
+        isAbs: true,
+        exercises: [
+            {
+                name: "Plancha Abdominal",
+                desc: "Mantén el cuerpo completamente alineado en posición horizontal apoyando antebrazos y puntas de los pies. Aprieta glúteos y abdomen fuertemente.",
+                muscles: "Transverso del Abdomen, Recto Abdominal, Oblicuos, Glúteos.",
+                substitutes: "Plancha lateral, Plancha sobre fitball, RKC Plank, Dragon flag.",
+                outsideBenefits: "Crea una faja abdominal natural que protege la columna vertebral contra hernias y lumbalgias.",
+                tips: "Evita que la cadera se hunda o se eleve. Si sientes la espalda baja, eleva ligeramente el culo o apoya las rodillas."
+            },
+            {
+                name: "Russian Twist (Giros Rusos)",
+                desc: "Sentado en el suelo con el torso inclinado a 45° y pies ligeramente elevados, gira el torso de lado a lado tocando el suelo a cada lado de forma controlada.",
+                muscles: "Oblicuos Internos y Externos, Recto Abdominal, Flexores de Cadera.",
+                substitutes: "Woodchoppers en polea (Leñadores), Plancha lateral con rotación.",
+                outsideBenefits: "Mejora la capacidad de rotación del núcleo corporal, clave para golpear en pádel/tenis, chutar o lanzar.",
+                tips: "Gira la cabeza y los hombros al mismo tiempo que las manos para asegurar que sea la musculatura abdominal la que rota y no solo los brazos."
+            },
+            {
+                name: "Levantamientos de Pierna",
+                desc: "Tumbado boca arriba con las manos bajo los glúteos para proteger la zona lumbar, eleva las piernas rectas hasta formar un ángulo de 90° y baja despacio sin tocar el suelo.",
+                muscles: "Recto Abdominal (Enfoque Inferior), Psoas Ilíaco.",
+                substitutes: "Elevación de rodillas colgado en barra, Crunches inversos en banco.",
+                outsideBenefits: "Fortalece los flexores de la cadera, mejorando la zancada en carrera y la estabilidad pélvica.",
+                tips: "Mantén la zona lumbar pegada firmemente al suelo durante todo el recorrido. Si se despega, no bajes tanto las piernas."
+            },
+            {
+                name: "Abdominales Declinados",
+                desc: "En banco inclinado con los pies fijados en los rodillos, flexiona el torso elevando las escápulas y manteniendo la tensión constante durante toda la bajada.",
+                muscles: "Recto Abdominal, Oblicuos, Flexores de Cadera.",
+                substitutes: "Crunch en polea alta (de rodillas).",
+                outsideBenefits: "Aumenta la fuerza en el bloqueo del tronco para ejercicios compuestos pesados como la sentadilla.",
+                tips: "No tire del cuello con las manos. Visualiza llevar las costillas hacia las caderas para contraer el abdomen."
+            }
+        ]
+    }
+};
+
+let currentWorkoutKey = "";
+
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('start-btn').addEventListener('click', function() {
+        showScreen('menu-screen');
+    });
+
+    document.getElementById('back-btn').addEventListener('click', function() {
+        showScreen('menu-screen');
+    });
+
+    document.querySelectorAll('.workout-card').forEach(card => {
+        card.addEventListener('click', function() {
+            const workoutKey = this.getAttribute('data-workout');
+            if (workoutKey) {
+                loadWorkout(workoutKey);
+            }
+        });
+    });
+
+    document.getElementById('close-modal-btn').addEventListener('click', function() {
+        closeModal();
+    });
+});
+
+function showScreen(screenId) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    const target = document.getElementById(screenId);
+    if (target) {
+        target.classList.add('active');
+    }
+    window.scrollTo(0, 0);
+}
+
+function loadWorkout(key) {
+    currentWorkoutKey = key;
+    const data = workoutsData[key];
+    document.getElementById('workout-title').innerText = data.title;
+
+    const warmupSec = document.getElementById('warmup-section');
+    const cooldownSec = document.getElementById('cooldown-section');
+    const mainTitle = document.getElementById('main-section-title');
+
+    if (data.isAbs) {
+        warmupSec.style.display = 'none';
+        cooldownSec.style.display = 'none';
+        mainTitle.innerText = "Circuito Intensivo de Abdominales";
+    } else {
+        warmupSec.style.display = 'block';
+        cooldownSec.style.display = 'block';
+        mainTitle.innerText = "2. Rutina Principal";
+
+        document.getElementById('warmup-container').innerHTML = data.warmup.map(item => `
+            <div class="exercise-card">
+                <div class="exercise-name" style="color: #93c5fd;">${item.name}</div>
+                <p class="exercise-desc" style="margin-top: 5px;">${item.desc}</p>
+            </div>
+        `).join('');
+
+        document.getElementById('cooldown-container').innerHTML = data.cooldown.map(item => `
+            <div class="exercise-card">
+                <div class="exercise-name" style="color: #6ee7b7;">${item.name}</div>
+                <p class="exercise-desc" style="margin-top: 5px;">${item.desc}</p>
+            </div>
+        `).join('');
+    }
+
+    document.getElementById('exercises-container').innerHTML = data.exercises.map((item, idx) => `
+        <div class="exercise-card">
+            <div class="exercise-header">
+                <div class="exercise-name">${idx + 1}. ${item.name}</div>
+                <button class="btn-clarification" onclick="openClarification(${idx})">Ver Aclaraciones & Variantes</button>
+            </div>
+            <p class="exercise-desc">${item.desc}</p>
+        </div>
+    `).join('');
+
+    showScreen('workout-screen');
+}
+
+function openClarification(idx) {
+    const exercise = workoutsData[currentWorkoutKey].exercises[idx];
+    document.getElementById('modal-exercise-name').innerText = "Aclaraciones: " + exercise.name;
+    
+    document.getElementById('modal-clarification-body').innerHTML = `
+        <div class="info-group">
+            <div class="info-title">Músculos Implicados Principalmente:</div>
+            <div class="info-text">${exercise.muscles || 'Toda la zona anatómica objetivo.'}</div>
+        </div>
+
+        <div class="info-group">
+            <div class="info-title">Sustitutos y Variaciones Recomendadas:</div>
+            <div class="info-text">${exercise.substitutes || 'Ejercicios con patrón de movimiento equivalente.'}</div>
+        </div>
+
+        <div class="info-group highlight-group">
+            <div class="info-title" style="color: #fbbf24;">Beneficios Fuera del Gimnasio (Rendimiento Diario):</div>
+            <div class="info-text">${exercise.outsideBenefits || 'Mejora de la fuerza funcional y prevención de lesiones.'}</div>
+        </div>
+
+        <div class="info-group">
+            <div class="info-title">Consejo / Truco Técnico de Ejecución:</div>
+            <div class="info-text">${exercise.tips || 'Mantén siempre una postura limpia antes que aumentar el peso.'}</div>
+        </div>
+    `;
+
+    document.getElementById('clarification-modal').style.display = 'flex';
+}
+
+function closeModal() {
+    document.getElementById('clarification-modal').style.display = 'none';
+}
+</script>
+</body>
+</html>
